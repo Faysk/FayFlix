@@ -1,3 +1,6 @@
+# Docs for the Azure Web Apps Deploy action: https://github.com/Azure/webapps-deploy
+# More GitHub Actions for Azure: https://github.com/Azure/actions
+
 name: Build and deploy Node.js app to Azure Web App - ApiServerFile
 
 on:
@@ -18,11 +21,14 @@ jobs:
         with:
           node-version: 'latest'
 
-      - name: npm install
-        run: npm install
+      - name: npm install, build, and test
+        run: |
+          npm install
+          npm run build --if-present
+          npm run test --if-present
 
       - name: Zip artifact for deployment
-        run: zip release.zip Back/file-server.js
+        run: zip release.zip ./* -r
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v3
@@ -53,6 +59,4 @@ jobs:
           app-name: 'ApiServerFile'
           slot-name: 'Production'
           package: .
-
-      - name: Configure HTTPS Port
-        run: sed -i 's/const PORT = process.env.PORT || 80;/const PORT = process.env.PORT || 443;/g' ./Back/file-server.js
+          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B3E35D2CDD3F45BBB50E0F4E8506AE1B }}
