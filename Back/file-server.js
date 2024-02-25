@@ -1,14 +1,12 @@
 const express = require('express');
+const os = require('os');
 const path = require('path');
 const fs = require('fs-extra');
 const cors = require('cors');
 const { BlobServiceClient, StorageSharedKeyCredential } = require('@azure/storage-blob');
-const https = require('https');
-const http = require('http');
 
 const app = express();
-const PORT_HTTP = process.env.PORT_HTTP || 80;
-const PORT_HTTPS = process.env.PORT_HTTPS || 443;
+const PORT = process.env.PORT || 443; // Alterado para porta 443
 
 const scriptName = path.basename(__filename, '.js');
 const logsDir = 'logs'; // Alterado para usar diretamente
@@ -17,8 +15,8 @@ const logsDir = 'logs'; // Alterado para usar diretamente
 app.use(cors());
 
 // Configuração de conexão do Azure Blob Storage
-const STORAGE_ACCOUNT_NAME = process.env.STORAGE_ACCOUNT_NAME;
-const ACCOUNT_KEY = process.env.ACCOUNT_KEY;
+const STORAGE_ACCOUNT_NAME = 'storagefayflix';
+const ACCOUNT_KEY = 'qcaWdF91e3ggHLN5vhJUVZuK+gsvN5/5Dd+jrlssPvEKQ9lkus3bTeQ6B5/h0gsbIzTgJxuE7wWM+ASthguHEg==';
 const CONTAINER_NAME_VIDEOS = "videos";
 const CONTAINER_NAME_GIFS = "gifs";
 const CONTAINER_NAME_THUMBNAILS = "thumbnails";
@@ -67,7 +65,16 @@ async function getVideosData() {
     return videos;
 }
 
-// Função para escrever no log
+// Fixando o endereço do servidor
+const serverAddress = 'https://apiserverfile.azurewebsites.net/';
+
+// Iniciando o servidor na porta 443
+app.listen(PORT, () => {
+    console.log(`Server is running on ${serverAddress}:${PORT}`);
+    // Log de teste
+    writeToLog(`Server started successfully at ${serverAddress}:${PORT}`);
+});
+
 async function writeToLog(message) {
     try {
         const now = new Date();
@@ -81,26 +88,4 @@ async function writeToLog(message) {
     } catch (error) {
         console.error('Error writing to log:', error);
     }
-}
-
-// Servidor HTTP
-const serverHTTP = http.createServer(app);
-serverHTTP.listen(PORT_HTTP, '0.0.0.0', () => {
-    console.log(`HTTP Server is running on port ${PORT_HTTP}`);
-    // Log de teste
-    writeToLog(`HTTP Server started successfully on port ${PORT_HTTP}`);
-});
-
-// Servidor HTTPS
-if (process.env.NODE_ENV === 'production') {
-    const serverHTTPS = https.createServer({
-        key: fs.readFileSync('/path/to/your/ssl/key.pem'),
-        cert: fs.readFileSync('/path/to/your/ssl/cert.pem')
-    }, app);
-    
-    serverHTTPS.listen(PORT_HTTPS, '0.0.0.0', () => {
-        console.log(`HTTPS Server is running on port ${PORT_HTTPS}`);
-        // Log de teste
-        writeToLog(`HTTPS Server started successfully on port ${PORT_HTTPS}`);
-    });
 }
