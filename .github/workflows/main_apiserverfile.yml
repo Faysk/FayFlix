@@ -2,7 +2,8 @@ name: Build and deploy Node.js app to Azure Web App - ApiServerFile
 
 on:
   push:
-    branches: [ $default-branch ]
+    branches: 
+      - main
   workflow_dispatch:
 
 permissions:
