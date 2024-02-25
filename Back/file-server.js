@@ -1,12 +1,14 @@
 const express = require('express');
-const os = require('os');
 const path = require('path');
 const fs = require('fs-extra');
 const cors = require('cors');
 const { BlobServiceClient, StorageSharedKeyCredential } = require('@azure/storage-blob');
+const https = require('https');
+const http = require('http');
 
 const app = express();
-const PORT = process.env.PORT || 3001;
+const PORT_HTTP = process.env.PORT_HTTP || 80;
+const PORT_HTTPS = process.env.PORT_HTTPS || 443;
 
 const scriptName = path.basename(__filename, '.js');
 const logsDir = 'logs'; // Alterado para usar diretamente
@@ -15,8 +17,8 @@ const logsDir = 'logs'; // Alterado para usar diretamente
 app.use(cors());
 
 // Configuração de conexão do Azure Blob Storage
-const STORAGE_ACCOUNT_NAME = 'storagefayflix';
-const ACCOUNT_KEY = 'qcaWdF91e3ggHLN5vhJUVZuK+gsvN5/5Dd+jrlssPvEKQ9lkus3bTeQ6B5/h0gsbIzTgJxuE7wWM+ASthguHEg==';
+const STORAGE_ACCOUNT_NAME = process.env.STORAGE_ACCOUNT_NAME;
+const ACCOUNT_KEY = process.env.ACCOUNT_KEY;
 const CONTAINER_NAME_VIDEOS = "videos";
 const CONTAINER_NAME_GIFS = "gifs";
 const CONTAINER_NAME_THUMBNAILS = "thumbnails";
@@ -65,27 +67,7 @@ async function getVideosData() {
     return videos;
 }
 
-// Função para encontrar o endereço IP da interface de rede desejada
-function getLocalIPAddress() {
-    const ifaces = os.networkInterfaces();
-    for (const iface in ifaces) {
-        for (const details of ifaces[iface]) {
-            if (details.family === 'IPv4' && !details.internal) {
-                return details.address;
-            }
-        }
-    }
-    return '127.0.0.1'; // Retorna localhost se nenhum IP externo for encontrado
-}
-
-// Use o endereço IP da rede local como IP para escutar
-const localIPAddress = getLocalIPAddress();
-app.listen(PORT, localIPAddress, () => {
-    console.log(`Server is running on http://${localIPAddress}:${PORT}`);
-    // Log de teste
-    writeToLog(`Server started successfully at http://${localIPAddress}:${PORT}`);
-});
-
+// Função para escrever no log
 async function writeToLog(message) {
     try {
         const now = new Date();
@@ -99,4 +81,26 @@ async function writeToLog(message) {
     } catch (error) {
         console.error('Error writing to log:', error);
     }
+}
+
+// Servidor HTTP
+const serverHTTP = http.createServer(app);
+serverHTTP.listen(PORT_HTTP, '0.0.0.0', () => {
+    console.log(`HTTP Server is running on port ${PORT_HTTP}`);
+    // Log de teste
+    writeToLog(`HTTP Server started successfully on port ${PORT_HTTP}`);
+});
+
+// Servidor HTTPS
+if (process.env.NODE_ENV === 'production') {
+    const serverHTTPS = https.createServer({
+        key: fs.readFileSync('/path/to/your/ssl/key.pem'),
+        cert: fs.readFileSync('/path/to/your/ssl/cert.pem')
+    }, app);
+    
+    serverHTTPS.listen(PORT_HTTPS, '0.0.0.0', () => {
+        console.log(`HTTPS Server is running on port ${PORT_HTTPS}`);
+        // Log de teste
+        writeToLog(`HTTPS Server started successfully on port ${PORT_HTTPS}`);
+    });
 }
