@@ -1,0 +1,187 @@
+body {
+    margin: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f0f0f0; /* Um tom mais claro de cinza para o fundo */
+    transition: background-color 0.3s ease;
+}
+
+header {
+    background-color: #333;
+    color: #fff;
+    padding: 20px 0;
+    text-align: center;
+}
+
+.video-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    gap: 20px;
+    padding: 20px;
+}
+
+.video-item {
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Sombra mais pronunciada */
+    border-radius: 12px; /* Bordas mais arredondadas */
+    overflow: hidden;
+}
+
+.video-thumbnail {
+    width: 100%;
+    height: auto;
+    display: block;
+    border-bottom: 2px solid #eee; /* Linha mais grossa separando a thumbnail */
+    cursor: pointer;
+}
+
+.video-info {
+    padding: 15px;
+}
+
+.video-title {
+    font-size: 18px; /* Tamanho maior para o título */
+    font-weight: bold;
+    margin: 0;
+    color: #000000c7; /* Cor mais escura para o título */
+}
+
+.video-description {
+    font-size: 14px;
+    color: #666; /* Cor mais suave para a descrição */
+    margin: 10px 0; /* Maior margem superior e inferior */
+}
+
+.video-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.9); /* Fundo mais escuro para o overlay */
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.video-popup {
+    background-color: #fff;
+    padding: 4px 4px 0px 4px; /* Mais espaço interno */
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.3); /* Sombra mais suave */
+    width: 90%;
+    max-width: 800px;
+    height: auto;
+}
+
+.dark-mode .video-popup {
+    background-color: #333; /* Cor de fundo mais escura no modo escuro */
+    box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); /* Sombra mais suave no modo escuro */
+}
+
+.popup-video {
+    width: 100%;
+    height: auto;
+    outline: none;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    cursor: pointer;
+    font-size: 20px;
+    color: #888;
+}
+
+.dark-mode-toggle {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: #333;
+    color: #fff;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    z-index: 9999;
+    transition: background-color 0.3s ease; /* Transição suave para mudanças de cor */
+}
+
+.dark-mode-toggle i {
+    font-size: 24px; /* Ícone maior */
+}
+
+.dark-mode-toggle .mode-indicator {
+    width: 24px;
+    height: 24px;
+    background-color: #fff;
+    border-radius: 50%;
+    transition: transform 0.3s ease-in-out;
+}
+
+.dark-mode .dark-mode-toggle .mode-indicator {
+    background-color: #333;
+}
+
+.dark-mode {
+    background-color: #222; /* Fundo mais escuro no modo escuro */
+    color: #fff;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* Altera a fonte no modo escuro */
+}
+
+.dark-mode header {
+    background-color: #333; /* Cabeçalho mais escuro no modo escuro */
+}
+
+.dark-mode .video-item {
+    background-color: #444; /* Itens de vídeo mais escuros no modo escuro */
+}
+
+.dark-mode .video-thumbnail {
+    border-bottom: 2px solid #666; /* Linha mais grossa no modo escuro */
+}
+
+.dark-mode .video-title {
+    font-size: 18px; /* Tamanho maior para o título */
+    font-weight: bold;
+    margin: 0;
+    color: #f0f0f0c7; /* Cor mais escura para o título */
+}
+
+.dark-mode .video-description {
+    color: #999; /* Cor mais clara para a descrição no modo escuro */
+}
+
+.video-popup.click-feedback-left {
+    animation: clickAnimationLeft 0.3s;
+}
+
+.video-popup.click-feedback-right {
+    animation: clickAnimationRight 0.3s;
+}
+
+@keyframes clickAnimationLeft {
+    0% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(-10px); /* Ajuste para a direção desejada */
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
+
+@keyframes clickAnimationRight {
+    0% {
+        transform: translateX(0);
+    }
+    50% {
+        transform: translateX(10px); /* Ajuste para a direção desejada */
+    }
+    100% {
+        transform: translateX(0);
+    }
+}
