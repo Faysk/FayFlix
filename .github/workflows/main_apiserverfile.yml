@@ -54,3 +54,5 @@ jobs:
           slot-name: 'Production'
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_B3E35D2CDD3F45BBB50E0F4E8506AE1B }}
+      - name: Configure HTTPS Port
+        run: sed -i 's/PORT=8080/PORT=443/g' .env
